@@ -356,9 +356,9 @@ public class PullToRefreshLayout extends RelativeLayout {
                 break;
             case MotionEvent.ACTION_MOVE:
                 if (mEvents == 0) {
-                    if (pullDownY > 0
+                    if (pullDownY > 0//下拉的距离
                             || (((Pullable) pullableView).canPullDown()
-                            && canPullDown && state != LOADING)) {
+                            && canPullDown && state != LOADING)) {//正在加载  正在加载时不能下拉
                         // 可以下拉，正在加载时不能下拉
                         // 对实际滑动距离做缩小，造成用力拉的感觉
                         pullDownY = pullDownY + (ev.getY() - lastY) / radio;
@@ -374,7 +374,7 @@ public class PullToRefreshLayout extends RelativeLayout {
                             isTouch = true;
                         }
                     } else if (pullUpY < 0
-                            || (((Pullable) pullableView).canPullUp() && canPullUp && state != REFRESHING)) {
+                            || (((Pullable) pullableView).canPullUp() && canPullUp && state != REFRESHING)) {//正在刷新
                         // 可以上拉，正在刷新时不能上拉
                         pullUpY = pullUpY + (ev.getY() - lastY) / radio;
                         if (pullUpY > 0) {
