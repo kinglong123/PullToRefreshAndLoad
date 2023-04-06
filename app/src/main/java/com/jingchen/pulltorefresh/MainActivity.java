@@ -17,6 +17,7 @@ import com.jingchen.pulltorefresh.activity.PullableExpandableListViewActivity;
 import com.jingchen.pulltorefresh.activity.PullableGridViewActivity;
 import com.jingchen.pulltorefresh.activity.PullableImageViewActivity;
 import com.jingchen.pulltorefresh.activity.PullableListViewActivity;
+import com.jingchen.pulltorefresh.activity.PullableRecyelerViewActivity;
 import com.jingchen.pulltorefresh.activity.PullableScrollViewActivity;
 import com.jingchen.pulltorefresh.activity.PullableTextViewActivity;
 import com.jingchen.pulltorefresh.activity.PullableWebViewActivity;
@@ -51,6 +52,7 @@ public class MainActivity extends Activity {
         items.add("可下拉刷新上拉加载的WebView");
         items.add("可下拉刷新上拉加载的ImageView");
         items.add("可下拉刷新上拉加载的TextView");
+        items.add("可下拉刷新上拉加载的RecyelerView");
         MyAdapter adapter = new MyAdapter(this, items);
         listView.setAdapter(adapter);
         listView.setOnItemLongClickListener(new OnItemLongClickListener() {
@@ -102,6 +104,12 @@ public class MainActivity extends Activity {
                         it.setClass(MainActivity.this,
                                 PullableTextViewActivity.class);
                         break;
+                    case 7:
+                        it.setClass(MainActivity.this,
+                                PullableRecyelerViewActivity.class);
+                        break;
+
+
 
                     default:
                         break;

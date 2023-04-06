@@ -37,6 +37,11 @@
         </activity>
         <activity android:name="com.jingchen.pulltorefresh.activity.PullableTextViewActivity" >
         </activity>
+
+        <activity android:name="com.jingchen.pulltorefresh.activity.PullableRecyelerViewActivity" >
+        </activity>
+
+
     </application>
 
 </manifest>

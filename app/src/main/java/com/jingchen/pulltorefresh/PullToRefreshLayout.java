@@ -131,6 +131,7 @@ public class PullToRefreshLayout extends RelativeLayout {
                 // 正在刷新，且没有往上推的话则悬停，显示"正在刷新..."
                 if (state == REFRESHING && pullDownY <= refreshDist) {
                     pullDownY = refreshDist;
+                    System.out.println("1111111111111pullDownY:"+pullDownY);
                     timer.cancel();
                 } else if (state == LOADING && -pullUpY <= loadmoreDist) {
                     pullUpY = -loadmoreDist;
@@ -138,8 +139,12 @@ public class PullToRefreshLayout extends RelativeLayout {
                 }
 
             }
-            if (pullDownY > 0)
+            if (pullDownY > 0){
                 pullDownY -= MOVE_SPEED;
+                System.out.println("111111111111122222pullDownY:"+pullDownY);
+            }
+
+
             else if (pullUpY < 0)
                 pullUpY += MOVE_SPEED;
             if (pullDownY < 0) {
@@ -377,6 +382,7 @@ public class PullToRefreshLayout extends RelativeLayout {
                             canPullDown = false;
                             canPullUp = true;
                         }
+                        System.out.println("333333333pullDownY:"+pullDownY);
                         if (pullDownY > getMeasuredHeight())
                             pullDownY = getMeasuredHeight();
                         if (state == REFRESHING) {
