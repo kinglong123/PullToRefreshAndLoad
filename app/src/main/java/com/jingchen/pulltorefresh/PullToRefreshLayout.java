@@ -2,6 +2,8 @@ package com.jingchen.pulltorefresh;
 
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
+
 
 import android.app.Activity;
 import android.content.Context;
@@ -20,6 +22,12 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.jingchen.pulltorefresh.pullableview.Pullable;
+
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * 自定义的布局，用来管理三个子控件，其中一个是下拉头，一个是包含内容的pullableView（可以是实现Pullable接口的的任何View），
@@ -185,9 +193,11 @@ public class PullToRefreshLayout extends RelativeLayout {
 
     private void initView(Context context) {
         mContext = context;
-        timer = new MyTimer(updateHandler);
+        timer = new MyTimer();
+        //下拉箭头的转180°动画
         rotateAnimation = (RotateAnimation) AnimationUtils.loadAnimation(
                 context, R.anim.reverse_anim);
+        //均匀旋转动画
         refreshingAnimation = (RotateAnimation) AnimationUtils.loadAnimation(
                 context, R.anim.rotating);
         // 添加匀速转动动画
@@ -559,46 +569,104 @@ public class PullToRefreshLayout extends RelativeLayout {
                         + loadmoreView.getMeasuredHeight());
     }
 
-    class MyTimer {
-        private Handler handler;
-        private Timer timer;
-        private MyTask mTask;
+    Disposable disposable;
+    /**
+     * 开始定时执行
+     */
+    private void startTimer(long period) {
+        System.out.println("1111111111ssssssss1112222zzzzzzzzzzzzz");
+        stopTimer();
+        // 每隔period毫秒执行一次逻辑代码
+        System.out.println("111111112222zzzzzzzzzzzzz");
+        disposable = Observable.interval(1, period,TimeUnit.MILLISECONDS)
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .subscribe(new Consumer<Long>() {
+                    @Override
+                    public void accept(Long aLong) throws Exception {
+                        // 逻辑代码
+                        System.out.println("111111112222aLongzzzzzzz:"+aLong);
+                        if(updateHandler!=null){
+                            updateHandler.obtainMessage().sendToTarget();
+                        }
 
-        public MyTimer(Handler handler) {
-            this.handler = handler;
-            timer = new Timer();
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(@io.reactivex.annotations.NonNull Throwable throwable) throws Exception {
+                        throwable.printStackTrace();
+                        System.out.println("11111111333333333:"+throwable.getMessage());
+
+                    }
+                });
+    }
+
+    /**
+     * 停止定时执行
+     */
+    protected void stopTimer() {
+        if (null != disposable) {
+            disposable.dispose();
+            disposable = null;
         }
+    }
+    class MyTimer {
 
-        public void schedule(long period) {
-            if (mTask != null) {
-                mTask.cancel();
-                mTask = null;
-            }
-            mTask = new MyTask(handler);
-            timer.schedule(mTask, 0, period);
+
+
+
+        public  void schedule(long period) {
+            System.out.println("111111111111111111111");
+            PullToRefreshLayout.this.startTimer(period);
         }
 
         public void cancel() {
-            if (mTask != null) {
-                mTask.cancel();
-                mTask = null;
-            }
+            PullToRefreshLayout.this.stopTimer();
         }
 
-        class MyTask extends TimerTask {
-            private Handler handler;
 
-            public MyTask(Handler handler) {
-                this.handler = handler;
-            }
-
-            @Override
-            public void run() {
-                handler.obtainMessage().sendToTarget();
-            }
-
-        }
     }
+
+//    class MyTimer {
+//        private Handler handler;
+//        private Timer timer;
+//        private MyTask mTask;
+//
+//        public MyTimer(Handler handler) {
+//            this.handler = handler;
+//            timer = new Timer();
+//        }
+//
+//        public void schedule(long period) {
+//            if (mTask != null) {
+//                mTask.cancel();
+//                mTask = null;
+//            }
+//            mTask = new MyTask(handler);
+//            timer.schedule(mTask, 0, period);
+//        }
+//
+//        public void cancel() {
+//            if (mTask != null) {
+//                mTask.cancel();
+//                mTask = null;
+//            }
+//        }
+//
+//        class MyTask extends TimerTask {
+//            private Handler handler;
+//
+//            public MyTask(Handler handler) {
+//                this.handler = handler;
+//            }
+//
+//            @Override
+//            public void run() {
+//                handler.obtainMessage().sendToTarget();
+//            }
+//
+//        }
+//    }
 
     /**
      * 刷新加载回调接口
